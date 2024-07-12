@@ -1,5 +1,4 @@
 const db = require("../models/users");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { Users } = require("../models");
 
@@ -15,9 +14,11 @@ exports.login = async (req, res) => {
       return res.status(400).json({ error: "Usuario no encontrado" });
     }
 
-    const isMatch = await bcrypt.compare(passwordUsuario, user.passwordUsuario);
+    console.log("Email:", emailUsuario);
+    console.log("Provided Password:", passwordUsuario);
+    console.log("Stored Password:", user.passwordUsuario);
 
-    if (!isMatch) {
+    if (user.passwordUsuario !== passwordUsuario) {
       console.log("Incorrect password for user:", emailUsuario);
       return res.status(400).json({ error: "Contraseña incorrecta" });
     }
@@ -59,26 +60,21 @@ exports.getUsers = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-  const { emailUsuario, passwordUsuario, nombreUsuario } = req.body; // Asegúrate de que estos campos existan
+  const { emailUsuario, passwordUsuario, nombreUsuario } = req.body;
 
   try {
-    const hashedPassword = await bcrypt.hash(passwordUsuario, 10); // Asegúrate de hashear la contraseña
-    const user = await Users.create({
+    const newUser = await Users.create({
       emailUsuario,
-      passwordUsuario: hashedPassword,
+      passwordUsuario,
       nombreUsuario,
     });
 
-    res.status(201).json({
-      success: true,
-      user,
-    });
+    res
+      .status(201)
+      .json({ message: "Usuario registrado exitosamente", user: newUser });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Hubo un error al crear el usuario",
-      error: error.message,
-    });
+    console.error("Registration error:", error.message || error);
+    res.status(500).json({ error: "Error del servidor" });
   }
 };
 

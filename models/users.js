@@ -1,3 +1,5 @@
+const bcrypt = require("bcrypt");
+
 module.exports = (sequelize, DataTypes) => {
   const Users = sequelize.define("Users", {
     idUsuario: {
@@ -18,5 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
   });
+
   return Users;
 };

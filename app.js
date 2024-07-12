@@ -6,6 +6,7 @@ const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/usersRoutes");
 const db = require("./models");
 const cors = require("cors");
+require("dotenv").config();
 
 // Middleware
 app.use(cors({ origin: "http://localhost:1420" }));
