@@ -1,93 +1,86 @@
 const db = require("../models");
 
-// Obtener todos los datos
-exports.getData = async (req, res) => {
+exports.getProducts = async (req, res) => {
   try {
-    const data = await db.Data.findAll();
+    const products = await db.Product.findAll();
     res.status(200).json({
       success: true,
-      data,
+      products,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Hubo un error al obtener los datos",
+      message: "Hubo un error al obtener los productos",
       error: error.message,
     });
   }
 };
 
-// Crear un nuevo dato
-exports.createData = async (req, res) => {
+exports.createProduct = async (req, res) => {
   try {
-    const data = await db.Data.create(req.body);
+    const product = await db.Product.create(req.body);
     res.status(201).json({
       success: true,
-      data,
+      product,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Hubo un error al crear el dato",
+      message: "Hubo un error al crear el producto",
       error: error.message,
     });
   }
 };
 
-// Actualizar un dato existente
-exports.updateData = async (req, res) => {
+exports.updateProduct = async (req, res) => {
   try {
-    const [updated] = await db.Data.update(req.body, {
+    const [updated] = await db.Product.update(req.body, {
       where: {
         id: req.params.id,
       },
     });
     if (updated) {
-      const updatedData = await db.Data.findOne({
+      const updatedProduct = await db.Product.findOne({
         where: { id: req.params.id },
       });
       res.status(200).json({
         success: true,
-        data: updatedData,
+        product: updatedProduct,
       });
     } else {
       res.status(404).json({
         success: false,
-        message: "Dato no encontrado",
+        message: "Producto no encontrado",
       });
     }
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Hubo un error al actualizar el dato",
+      message: "Hubo un error al actualizar el producto",
       error: error.message,
     });
   }
 };
 
-// Eliminar un dato
-exports.deleteData = async (req, res) => {
+exports.deleteProduct = async (req, res) => {
   try {
-    const deleted = await db.Data.destroy({
+    const deleted = await db.Product.destroy({
       where: {
         id: req.params.id,
       },
     });
     if (deleted) {
-      res.status(200).json({
-        success: true,
-        message: "Dato eliminado correctamente",
-      });
+      res.status(204).json();
     } else {
       res.status(404).json({
         success: false,
-        message: "Dato no encontrado",
+        message: "Producto no encontrado",
       });
     }
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Hubo un error al eliminar el dato",
+      message: "Hubo un error al eliminar el producto",
       error: error.message,
     });
   }
