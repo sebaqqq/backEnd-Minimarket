@@ -1,39 +1,41 @@
 const db = require("../models/users");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { Users } = require("../models");
 
 exports.login = async (req, res) => {
   const { emailUsuario, passwordUsuario } = req.body;
 
   try {
-    const user = await db.Users.findOne({
-      where: { emailUsuario },
-    });
+    const user = await Users.findOne({ where: { emailUsuario } });
 
-    if (user) {
-      const match = await bcrypt.compare(passwordUsuario, user.passwordUsuario);
-
-      if (match) {
-        res.status(200).json({
-          token: "fake-jwt-token",
-          user: {
-            idUsuario: user.idUsuario,
-            nombreUsuario: user.nombreUsuario,
-            emailUsuario: user.emailUsuario,
-            rolUsuario: user.rolUsuario,
-          },
-        });
-      } else {
-        res.status(401).json({ message: "Credenciales incorrectas" });
-      }
-    } else {
-      res.status(401).json({ message: "Credenciales incorrectas" });
+    if (!user) {
+      return res.status(400).json({ error: "Usuario no encontrado" });
     }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Hubo un error al iniciar sesión",
-      error: error.message,
+
+    const isMatch = await bcrypt.compare(passwordUsuario, user.passwordUsuario);
+
+    if (!isMatch) {
+      return res.status(400).json({ error: "Contraseña incorrecta" });
+    }
+
+    const token = jwt.sign(
+      { idUsuario: user.idUsuario, rolUsuario: user.rolUsuario },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.json({
+      token,
+      user: {
+        idUsuario: user.idUsuario,
+        nombreUsuario: user.nombreUsuario,
+        rolUsuario: user.rolUsuario,
+      },
     });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Error del servidor" });
   }
 };
 
@@ -53,37 +55,26 @@ exports.getUsers = async (req, res) => {
   }
 };
 
-// exports.createUser = async (req, res) => {
-//   try {
-//     const user = await db.Users.create(req.body);
-//     res.status(201).json({
-//       success: true,
-//       user,
-//     });
-//   } catch (error) {
-//     res.status(500).json({
-//       success: false,
-//       message: "Hubo un error al crear el usuario",
-//       error: error.message,
-//     });
-//   }
-// };
 exports.createUser = async (req, res) => {
-  try {
-    // Crear un nuevo usuario usando los datos recibidos en req.body
-    const user = await db.Users.create(req.body);
+  const { emailUsuario, passwordUsuario, nombreUsuario } = req.body; // Asegúrate de que estos campos existan
 
-    // Si se crea exitosamente, devolver una respuesta con estado 201 (Created)
+  try {
+    const hashedPassword = await bcrypt.hash(passwordUsuario, 10); // Asegúrate de hashear la contraseña
+    const user = await Users.create({
+      emailUsuario,
+      passwordUsuario: hashedPassword,
+      nombreUsuario,
+    });
+
     res.status(201).json({
       success: true,
       user,
     });
   } catch (error) {
-    // Si hay un error durante la creación del usuario, devolver una respuesta con estado 500 (Internal Server Error)
     res.status(500).json({
       success: false,
       message: "Hubo un error al crear el usuario",
-      error: error.message, // Información detallada del error
+      error: error.message,
     });
   }
 };

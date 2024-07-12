@@ -5,7 +5,7 @@ const validateUsers = require("../middlewares/validateUsers");
 
 router.post("/login", userController.login);
 router.get("/users", userController.getUsers);
-router.post("/users", validateUsers, userController.createUser);
+router.post("/users", userController.createUser);
 router.put("/users/:id", validateUsers, userController.updateUser);
 router.delete("/users/:id", userController.deleteUser);
 
