@@ -7,15 +7,18 @@ exports.login = async (req, res) => {
   const { emailUsuario, passwordUsuario } = req.body;
 
   try {
+    console.log("Received login request for email:", emailUsuario);
     const user = await Users.findOne({ where: { emailUsuario } });
 
     if (!user) {
+      console.log("User not found:", emailUsuario);
       return res.status(400).json({ error: "Usuario no encontrado" });
     }
 
     const isMatch = await bcrypt.compare(passwordUsuario, user.passwordUsuario);
 
     if (!isMatch) {
+      console.log("Incorrect password for user:", emailUsuario);
       return res.status(400).json({ error: "Contraseña incorrecta" });
     }
 
@@ -34,7 +37,7 @@ exports.login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
+    console.error("Login error:", error.message || error);
     res.status(500).json({ error: "Error del servidor" });
   }
 };
