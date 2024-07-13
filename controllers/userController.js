@@ -60,13 +60,14 @@ exports.getUsers = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
-  const { emailUsuario, passwordUsuario, nombreUsuario } = req.body;
+  const { emailUsuario, passwordUsuario, nombreUsuario, rolUsuario } = req.body;
 
   try {
     const newUser = await Users.create({
       emailUsuario,
       passwordUsuario,
       nombreUsuario,
+      rolUsuario,
     });
 
     res
