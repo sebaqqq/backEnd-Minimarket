@@ -14,9 +14,11 @@ const sequelize = new Sequelize(
 
 const db = {};
 
-// Import models
-db.Users = require("./users")(sequelize, DataTypes);
-db.Products = require("./products")(sequelize, DataTypes);
+// Models
+db.Users = require("./Users")(sequelize, Sequelize.DataTypes);
+db.Sales = require("./Sales")(sequelize, Sequelize.DataTypes);
+db.Products = require("./Products")(sequelize, Sequelize.DataTypes);
+db.SalesProducts = require("./SalesProducts")(sequelize, Sequelize.DataTypes);
 
 // Sync database
 db.sequelize = sequelize;

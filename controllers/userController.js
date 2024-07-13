@@ -1,4 +1,3 @@
-const db = require("../models/users");
 const jwt = require("jsonwebtoken");
 const { Users } = require("../models");
 
@@ -45,7 +44,7 @@ exports.login = async (req, res) => {
 
 exports.getUsers = async (req, res) => {
   try {
-    const users = await db.Users.findAll();
+    const users = await Users.findAll();
     res.status(200).json({
       success: true,
       users,
@@ -81,13 +80,13 @@ exports.createUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const [updated] = await db.Users.update(req.body, {
+    const [updated] = await Users.update(req.body, {
       where: {
         id: req.params.id,
       },
     });
     if (updated) {
-      const updatedUser = await db.Users.findOne({
+      const updatedUser = await Users.findOne({
         where: { id: req.params.id },
       });
       res.status(200).json({
@@ -111,7 +110,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const deleted = await db.Users.destroy({
+    const deleted = await Users.destroy({
       where: {
         id: req.params.id,
       },

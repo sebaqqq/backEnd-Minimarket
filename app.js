@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const errorHandler = require("./middlewares/errorHandler");
 const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/usersRoutes");
+const salesRoutes = require("./routes/salesRoutes");
 const db = require("./models");
 const cors = require("cors");
 require("dotenv").config();
@@ -16,6 +17,7 @@ app.use(bodyParser.json());
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/sales", salesRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
