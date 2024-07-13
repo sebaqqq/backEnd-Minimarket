@@ -1,8 +1,8 @@
-const db = require("../models");
+const { Products } = require("../models");
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await db.Product.findAll();
+    const products = await Products.findAll();
     res.status(200).json({
       success: true,
       products,
@@ -17,16 +17,34 @@ exports.getProducts = async (req, res) => {
 };
 
 exports.createProduct = async (req, res) => {
+  const {
+    idProducto,
+    nombreProducto,
+    precioProducto,
+    categoriaProducto,
+    marcaProducto,
+    cantidadProducto,
+  } = req.body;
+
+  console.log(req.body);
+
   try {
-    const product = await db.Product.create(req.body);
+    const newProduct = await Products.create({
+      idProducto,
+      nombreProducto,
+      precioProducto,
+      categoriaProducto,
+      marcaProducto,
+      cantidadProducto,
+    });
+
     res.status(201).json({
-      success: true,
-      product,
+      message: "Producto registrado exitosamente",
+      product: newProduct,
     });
   } catch (error) {
     res.status(500).json({
-      success: false,
-      message: "Hubo un error al crear el producto",
+      message: "Hubo un error al registrar el producto",
       error: error.message,
     });
   }
@@ -34,13 +52,13 @@ exports.createProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const [updated] = await db.Product.update(req.body, {
+    const [updated] = await Products.update(req.body, {
       where: {
         id: req.params.id,
       },
     });
     if (updated) {
-      const updatedProduct = await db.Product.findOne({
+      const updatedProduct = await Products.findOne({
         where: { id: req.params.id },
       });
       res.status(200).json({
@@ -64,7 +82,7 @@ exports.updateProduct = async (req, res) => {
 
 exports.deleteProduct = async (req, res) => {
   try {
-    const deleted = await db.Product.destroy({
+    const deleted = await Products.destroy({
       where: {
         id: req.params.id,
       },
