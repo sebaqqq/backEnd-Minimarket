@@ -103,3 +103,44 @@ exports.deleteProduct = async (req, res) => {
     });
   }
 };
+
+exports.updateProductQuantity = async (req, res) => {
+  try {
+    const updates = req.body;
+
+    if (!Array.isArray(updates)) {
+      return res.status(400).json({
+        success: false,
+        message: "La solicitud debe contener un array de actualizaciones",
+      });
+    }
+
+    await Promise.all(
+      updates.map(async (update) => {
+        const { idProducto, nuevaCantidad } = update;
+        const product = await Products.findOne({
+          where: { idProducto: idProducto },
+        });
+
+        if (product) {
+          product.cantidadProducto = nuevaCantidad;
+          await product.save();
+        } else {
+          throw new Error(`Producto con ID ${idProducto} no encontrado`);
+        }
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Cantidades de productos actualizadas correctamente",
+    });
+  } catch (error) {
+    console.error("Error en updateProductQuantity:", error);
+    res.status(500).json({
+      success: false,
+      message: "Hubo un error al actualizar la cantidad",
+      error: error.message,
+    });
+  }
+};
