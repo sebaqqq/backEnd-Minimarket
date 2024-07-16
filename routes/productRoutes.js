@@ -6,7 +6,7 @@ const validateProducts = require("../middlewares/validateProduct");
 router.put("/updateQuantity", productController.updateProductQuantity);
 router.get("/products", productController.getProducts);
 router.post("/products", productController.createProduct);
-router.put("/products/:id", validateProducts, productController.updateProduct);
+router.put("/products/:id", productController.updateProduct);
 router.delete(
   "/products/:id",
   validateProducts,
