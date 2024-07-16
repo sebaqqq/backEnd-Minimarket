@@ -1,10 +1,10 @@
 const { Products } = require("../models");
 
 const validateProducts = async (req, res, next) => {
-  const { idProducto } = req.params;
+  const { id } = req.params;
 
   try {
-    const product = await Products.findByPk(idProducto);
+    const product = await Products.findByPk(id);
 
     if (!product) {
       return res.status(404).json({ error: "Producto no encontrado" });
