@@ -1,11 +1,13 @@
 const { Sales, SalesProducts, Products } = require("../models");
 
 exports.getSales = async (req, res) => {
+  console.log("getSales called with ID:", req.params.id);
   try {
     const sale = await Sales.findOne({
       where: { idVenta: req.params.id },
       include: [{ model: Products, through: SalesProducts }],
     });
+    console.log("Sale found:", sale);
     if (sale) {
       res.status(200).json({
         success: true,
@@ -18,6 +20,7 @@ exports.getSales = async (req, res) => {
       });
     }
   } catch (error) {
+    console.error("Error in getSales:", error);
     res.status(500).json({
       success: false,
       message: "Error del servidor",
@@ -27,10 +30,12 @@ exports.getSales = async (req, res) => {
 };
 
 exports.getAllSales = async (req, res) => {
+  console.log("getAllSales called");
   try {
     const sales = await Sales.findAll({
       include: [{ model: Products, through: SalesProducts }],
     });
+    console.log("All sales found:", sales);
     if (sales.length) {
       res.status(200).json({
         success: true,
@@ -43,6 +48,7 @@ exports.getAllSales = async (req, res) => {
       });
     }
   } catch (error) {
+    console.error("Error in getAllSales:", error);
     res.status(500).json({
       success: false,
       message: "Error del servidor",

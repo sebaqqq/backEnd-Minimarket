@@ -5,6 +5,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const productRoutes = require("./routes/productRoutes");
 const userRoutes = require("./routes/usersRoutes");
 const salesRoutes = require("./routes/salesRoutes");
+const salesProductsRoutes = require("./routes/salesProductsRoutes");
 const db = require("./models");
 const cors = require("cors");
 require("dotenv").config();
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/sales", salesRoutes);
+app.use("/api/salesProducts", salesProductsRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
