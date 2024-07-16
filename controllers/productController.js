@@ -50,36 +50,6 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-exports.updateProduct = async (req, res) => {
-  try {
-    const [updated] = await Products.update(req.body, {
-      where: {
-        id: req.params.id,
-      },
-    });
-    if (updated) {
-      const updatedProduct = await Products.findOne({
-        where: { id: req.params.id },
-      });
-      res.status(200).json({
-        success: true,
-        product: updatedProduct,
-      });
-    } else {
-      res.status(404).json({
-        success: false,
-        message: "Producto no encontrado",
-      });
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Hubo un error al actualizar el producto",
-      error: error.message,
-    });
-  }
-};
-
 exports.deleteProduct = async (req, res) => {
   try {
     const deleted = await Products.destroy({
@@ -140,6 +110,49 @@ exports.updateProductQuantity = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Hubo un error al actualizar la cantidad",
+      error: error.message,
+    });
+  }
+};
+
+exports.updateProduct = async (req, res) => {
+  console.log("Datos recibidos para actualizar el producto:", req.body);
+  console.log("ID del producto a actualizar:", req.params.id);
+
+  try {
+    const [updated] = await Products.update(req.body, {
+      where: {
+        idProducto: req.params.id,
+      },
+    });
+
+    console.log("Resultado de la actualización:", updated);
+
+    if (updated) {
+      const updatedProduct = await Products.findOne({
+        where: { idProducto: req.params.id },
+      });
+
+      console.log("Producto actualizado:", updatedProduct);
+
+      res.status(200).json({
+        success: true,
+        product: updatedProduct,
+      });
+    } else {
+      console.log("Producto no encontrado para la actualización");
+
+      res.status(404).json({
+        success: false,
+        message: "Producto no encontrado",
+      });
+    }
+  } catch (error) {
+    console.error("Error al actualizar el producto:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Hubo un error al actualizar el producto",
       error: error.message,
     });
   }
