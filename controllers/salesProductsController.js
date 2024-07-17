@@ -20,6 +20,7 @@ exports.getAllSalesProducts = async (req, res) => {
         {
           model: Sales,
           as: "Sale",
+          attributes: ["idVenta", "fechaVenta", "totalVenta", "tipoPago"],
           include: [
             {
               model: Users,
@@ -59,13 +60,25 @@ exports.getSalesProducts = async (req, res) => {
   try {
     const sale = await SalesProducts.findOne({
       where: { idVenta: req.params.id },
-      include: [{ model: Products, as: "Products" }],
+      include: [
+        { model: Products, as: "Product" },
+        {
+          model: Sales,
+          as: "Sale",
+          attributes: ["idVenta", "fechaVenta", "totalVenta"],
+        },
+      ],
     });
     console.log("Sale found:", sale);
     if (sale) {
       res.status(200).json({
         success: true,
-        sale,
+        sale: {
+          idVenta: sale.idVenta,
+          fechaVenta: sale.Sale.fechaVenta,
+          totalVenta: sale.Sale.totalVenta,
+          producto: sale.Product,
+        },
       });
     } else {
       res.status(404).json({
