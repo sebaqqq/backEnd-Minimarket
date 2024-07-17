@@ -1,14 +1,36 @@
-const { SalesProducts, Products, Sales } = require("../models");
+const { SalesProducts, Products, Sales, Users } = require("../models");
 
 exports.getAllSalesProducts = async (req, res) => {
   console.log("getAllSalesProducts called");
   try {
-    // Fetch all sales with associated products
     const salesProducts = await SalesProducts.findAll({
-      include: [{ model: Products, as: "Products" }],
+      include: [
+        {
+          model: Products,
+          as: "Product",
+          attributes: [
+            "idProducto",
+            "nombreProducto",
+            "precioProducto",
+            "categoriaProducto",
+            "marcaProducto",
+            "cantidadProducto",
+          ],
+        },
+        {
+          model: Sales,
+          as: "Sale",
+          include: [
+            {
+              model: Users,
+              as: "User",
+              attributes: ["nombreUsuario", "emailUsuario"],
+            },
+          ],
+        },
+      ],
     });
 
-    // Log to verify the data format
     console.log("All salesProducts found:", salesProducts);
 
     if (salesProducts.length) {
@@ -37,6 +59,7 @@ exports.getSalesProducts = async (req, res) => {
   try {
     const sale = await SalesProducts.findOne({
       where: { idVenta: req.params.id },
+      include: [{ model: Products, as: "Products" }],
     });
     console.log("Sale found:", sale);
     if (sale) {
@@ -54,7 +77,7 @@ exports.getSalesProducts = async (req, res) => {
     console.error("Error in getSalesProducts:", error);
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Error del servidor",
       error: error.message,
     });
   }
@@ -63,6 +86,12 @@ exports.getSalesProducts = async (req, res) => {
 exports.createSalesProducts = async (req, res) => {
   console.log("createSalesProducts called with:", req.body);
   try {
+    if (!req.body.idVenta || !req.body.idProducto || !req.body.cantidad) {
+      return res.status(400).json({
+        success: false,
+        message: "Campos requeridos faltantes",
+      });
+    }
     const newSale = await SalesProducts.create(req.body);
     console.log("New sale created:", newSale);
     res.status(201).json({
@@ -73,7 +102,7 @@ exports.createSalesProducts = async (req, res) => {
     console.error("Error in createSalesProducts:", error);
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Error del servidor",
       error: error.message,
     });
   }
@@ -89,7 +118,7 @@ exports.updateSalesProducts = async (req, res) => {
     if (affectedRows > 0) {
       res.status(200).json({
         success: true,
-        message: "Sale updated successfully",
+        message: "Venta actualizada correctamente",
       });
     } else {
       res.status(404).json({
@@ -101,7 +130,7 @@ exports.updateSalesProducts = async (req, res) => {
     console.error("Error in updateSalesProducts:", error);
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Error del servidor",
       error: error.message,
     });
   }
@@ -128,7 +157,7 @@ exports.deleteSalesProducts = async (req, res) => {
     console.error("Error in deleteSalesProducts:", error);
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Error del servidor",
       error: error.message,
     });
   }
@@ -156,7 +185,7 @@ exports.getSalesProductsByProduct = async (req, res) => {
     console.error("Error in getSalesProductsByProduct:", error);
     res.status(500).json({
       success: false,
-      message: "Server error",
+      message: "Error del servidor",
       error: error.message,
     });
   }

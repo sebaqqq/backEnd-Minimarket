@@ -27,10 +27,9 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Sales.associate = (models) => {
-    Sales.belongsToMany(models.Products, {
-      through: "SalesProducts",
+    Sales.hasMany(models.SalesProducts, {
       foreignKey: "idVenta",
-      otherKey: "idProducto",
+      as: "SalesProducts",
     });
   };
 
