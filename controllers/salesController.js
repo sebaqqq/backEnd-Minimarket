@@ -151,15 +151,26 @@ exports.processReturn = async (req, res) => {
         .json({ success: false, message: "Producto no encontrado" });
     }
 
-    const totalPrecio = -Math.abs(product.precioProducto * cantidad);
+    const fechaVenta = new Date();
+    const totalVenta = -Math.abs(product.precioProducto * cantidad);
     const cantidadNegativa = -Math.abs(cantidad);
 
+    console.log("Fecha Venta:", fechaVenta);
+    console.log("Total Venta:", totalVenta);
+    console.log("Tipo Pago:", tipoPago);
+    console.log("ID Users:", idUsers);
+
     const newSale = await Sales.create({
-      idProducto,
-      cantidad: cantidadNegativa,
-      totalPrecio,
+      fechaVenta,
+      totalVenta,
       tipoPago,
       idUsers,
+    });
+
+    await SalesProducts.create({
+      idVenta: newSale.idVenta,
+      idProducto: idProducto,
+      cantidad: cantidadNegativa,
     });
 
     product.cantidadProducto += cantidad;
