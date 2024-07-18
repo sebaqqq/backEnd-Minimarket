@@ -7,6 +7,7 @@ router.get("/sales", salesController.getAllSales);
 router.get("/sales/:id", validateSales, salesController.getSales);
 router.post("/sales", salesController.createSale);
 router.put("/sales/:id", validateSales, salesController.updateSale);
+router.post("/processReturn", salesController.processReturn);
 router.delete("/sales/:id", validateSales, salesController.deleteSale);
 
 module.exports = router;

@@ -139,3 +139,43 @@ exports.deleteSale = async (req, res) => {
     });
   }
 };
+
+exports.processReturn = async (req, res) => {
+  const { idProducto, cantidad, tipoPago, idUsers } = req.body;
+
+  try {
+    const product = await Products.findOne({ where: { idProducto } });
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Producto no encontrado" });
+    }
+
+    const totalPrecio = -Math.abs(product.precioProducto * cantidad);
+    const cantidadNegativa = -Math.abs(cantidad);
+
+    const newSale = await Sales.create({
+      idProducto,
+      cantidad: cantidadNegativa,
+      totalPrecio,
+      tipoPago,
+      idUsers,
+    });
+
+    product.cantidadProducto += cantidad;
+    await product.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Devolución registrada exitosamente",
+      sale: newSale,
+    });
+  } catch (error) {
+    console.error("Error al registrar la devolución:", error);
+    res.status(500).json({
+      success: false,
+      message: "Hubo un error al registrar la devolución",
+      error: error.message,
+    });
+  }
+};
