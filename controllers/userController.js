@@ -1,6 +1,18 @@
 const jwt = require("jsonwebtoken");
 const { Users } = require("../models");
 
+exports.logout = (req, res) => {
+  console.log("Logout requested");
+
+  try {
+    res.status(200).json({ message: "Sesión cerrada exitosamente" });
+    console.log("Logout successful");
+  } catch (error) {
+    console.error("Logout error:", error.message || error);
+    res.status(500).json({ error: "Error del servidor" });
+  }
+};
+
 exports.login = async (req, res) => {
   const { emailUsuario, passwordUsuario } = req.body;
 
