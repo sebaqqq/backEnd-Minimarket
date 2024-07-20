@@ -15,10 +15,10 @@ const sequelize = new Sequelize(
 const db = {};
 
 // Models
-db.Users = require("./Users")(sequelize, Sequelize.DataTypes);
-db.Sales = require("./Sales")(sequelize, Sequelize.DataTypes);
-db.Products = require("./Products")(sequelize, Sequelize.DataTypes);
-db.SalesProducts = require("./SalesProducts")(sequelize, Sequelize.DataTypes);
+db.Users = require("./users")(sequelize, Sequelize.DataTypes);
+db.Sales = require("./sales.js")(sequelize, Sequelize.DataTypes);
+db.Products = require("./products")(sequelize, Sequelize.DataTypes);
+db.SalesProducts = require("./salesproducts")(sequelize, Sequelize.DataTypes);
 
 // Associations
 // Users and Sales
